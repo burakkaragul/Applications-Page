@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Uygulama Listesi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007aff;
+            --bg-color: #f2f2f7;
+            --card-bg: #fff;
+            --text-color: #1c1c1e;
+            --muted-color: #8e8e93;
+            --border-color: #e0e0e0;
+            --badge-bg: #f0f0f5;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            --border-radius: 16px;
+            --transition: all 0.3s ease-in-out;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 10px;
+            color: var(--text-color);
+            line-height: 1.5;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            max-width: 900px;
+            width: 100%;
+            margin: 20px auto;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            height: 32px;
+            max-width: 100%;
+        }
+
+        .search-container {
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+            /* Chrome, Safari, Opera */
+        }
+
+        .tab {
+            flex: 0 0 auto;
+            min-width: 100px;
+            text-align: center;
+            padding: 10px 15px;
+            border-radius: 12px;
+            background-color: #ceced3;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            background-color: #f6f6f6;
+            color: black;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -15px;
+            padding: 0 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        th,
+        td {
+            padding: 15px 10px;
+            text-align: left;
+            border-bottom: 1px solid #e5e5ea;
+            vertical-align: top;
+            overflow: visible;
+            position: relative;
+        }
+
+        th.department {
+            width: 35%;
+        }
+
+        .department-header {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 8px;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background-color: var(--badge-bg);
+            transition: var(--transition);
+            border: 1px solid transparent;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 14px;
+            touch-action: manipulation;
+        }
+
+        a:hover,
+        a:active {
+            background-color: white;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .muted {
+            color: var(--muted-color);
+            text-align: center;
+            display: block;
+            padding: 15px;
+            font-style: italic;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background-color: #2c2c2e;
+            color: #fff;
+            text-align: left;
+            padding: 12px 16px;
+            border-radius: 12px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: var(--transition);
+            font-size: 13px;
+            white-space: normal;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            line-height: 1.4;
+            pointer-events: none;
+            width: max-content;
+            max-width: 280px;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #2c2c2e transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .app-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            position: relative;
+            padding-bottom: 35px;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            width: 100%;
+        }
+
+        .app-list.expanded {
+            max-height: 800px;
+            transition: max-height 0.4s ease-in;
+        }
+
+        .app-item {
+            display: inline-flex;
+            align-items: center;
+            opacity: 1;
+            transition: var(--transition);
+            transform: translateY(0);
+        }
+
+        .app-item.hidden {
+            opacity: 0;
+            transform: translateY(-10px);
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .show-more-btn {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+            padding: 6px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            transition: var(--transition);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .show-more-btn i {
+            transition: var(--transition);
+        }
+
+        .show-more-btn.expanded i {
+            transform: rotate(180deg);
+        }
+
+        .show-more-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
+            .card {
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+                border: none;
+                padding: 15px 10px;
+            }
+
+            th,
+            td {
+                padding: 12px 8px;
+            }
+
+            th.department {
+                width: 40%;
+            }
+
+            .app-list {
+                gap: 6px;
+            }
+
+            a {
+                padding: 5px 8px;
+                font-size: 13px;
+                margin-bottom: 6px;
+            }
+
+            .tooltip .tooltiptext {
+                max-width: 220px;
+                font-size: 12px;
+                padding: 10px;
+            }
+        }
+
+        /* Small Mobile Styles */
+        @media (max-width: 480px) {
+            .logo img {
+                height: 28px;
+            }
+
+            .search-input {
+                padding: 10px;
+            }
+
+            th.department {
+                width: 45%;
+            }
+
+            th,
+            td {
+                padding: 10px 6px;
+            }
+
+            a {
+                max-width: 90px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="logo">
+            <img src="https://emaasigorta.com.tr/assets/logo/logo.svg" alt="Emaa Sigorta Logo">
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Uygulama ara..." aria-label="Uygulama arama kutusu"
+                id="search-input">
+        </div>
+        <div class="tabs" id="stage-tabs" role="tablist"></div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="department">Departman</th>
+                        <th>Uygulamalar</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const mockData = {
+                stages: [
+                    { id: 1, name: "Prod" },
+                    { id: 2, name: "PreProd" },
+                    { id: 3, name: "Test" },
+                    { id: 3, name: "UAT" }
+                ],
+                domains: [
+                    { id: 1, name: "Human Resources" },
+                    { id: 2, name: "Information Technology" },
+                    { id: 3, name: "Finance" },
+                    { id: 4, name: "Sales" },
+                    { id: 5, name: "Marketing" }
+                ],
+                applications: [
+                    { id: 1, name: "HR-App1", description: "İnsan Kaynakları Yönetim Sistemi", url: "https://hr1.emaasigorta.com", domain: "Human Resources", stage: "Production" },
+                    { id: 2, name: "HR-App2", description: "Personel Takip Sistemi", url: "https://hr2.emaasigorta.com", domain: "Human Resources", stage: "Production" },
+                    { id: 3, name: "HR-App3", description: "İzin Yönetim Sistemi", url: "https://hr3.emaasigorta.com", domain: "Human Resources", stage: "Test" },
+                    { id: 4, name: "HR-App4", description: "Eğitim Portalı", url: "https://hr4.emaasigorta.com", domain: "Human Resources", stage: "Production" },
+                    { id: 5, name: "HR-App5", description: "Performans Değerlendirme", url: "https://hr5.emaasigorta.com", domain: "Human Resources", stage: "Production" },
+                    { id: 6, name: "HR-App6", description: "İşe Alım Portalı", url: "https://hr6.emaasigorta.com", domain: "Human Resources", stage: "Development" },
+                    { id: 7, name: "IT-Monitor", description: "Sistem İzleme Platformu", url: "https://monitor.emaasigorta.com", domain: "Information Technology", stage: "Production" },
+                    { id: 8, name: "IT-Helpdesk", description: "Teknik Destek Sistemi", url: "https://helpdesk.emaasigorta.com", domain: "Information Technology", stage: "Production" },
+                    { id: 9, name: "IT-Assets", description: "Varlık Yönetimi", url: "https://assets.emaasigorta.com", domain: "Information Technology", stage: "Test" },
+                    { id: 10, name: "Finance-ERP", description: "Kurumsal Kaynak Planlama Sistemi", url: "https://erp.emaasigorta.com", domain: "Finance", stage: "Production" },
+                    { id: 11, name: "Finance-Budget", description: "Bütçe Yönetim Sistemi", url: "https://budget.emaasigorta.com", domain: "Finance", stage: "Production" },
+                    { id: 12, name: "Finance-Invoice", description: "Fatura Yönetim Sistemi", url: "https://invoice.emaasigorta.com", domain: "Finance", stage: "Test" },
+                    { id: 13, name: "Sales-CRM", description: "Müşteri İlişkileri Yönetimi", url: "https://crm.emaasigorta.com", domain: "Sales", stage: "Production" },
+                    { id: 14, name: "Sales-Analytics", description: "Satış Analiz Platformu", url: "https://analytics.emaasigorta.com", domain: "Sales", stage: "Test" },
+                    { id: 15, name: "Sales-Quotes", description: "Teklif Yönetim Sistemi", url: "https://quotes.emaasigorta.com", domain: "Sales", stage: "Production" },
+                    { id: 16, name: "Marketing-Campaign", description: "Kampanya Yönetim Sistemi", url: "https://campaign.emaasigorta.com", domain: "Marketing", stage: "Production" },
+                    { id: 17, name: "Marketing-Social", description: "Sosyal Medya Yönetim Platformu", url: "https://social.emaasigorta.com", domain: "Marketing", stage: "Production" },
+                    { id: 18, name: "Marketing-Content", description: "İçerik Yönetim Sistemi", url: "https://content.emaasigorta.com", domain: "Marketing", stage: "Development" }
+                ]
+            };
+
+            const tabsContainer = document.getElementById('stage-tabs');
+            const tableBody = document.getElementById('table-body');
+            const searchInput = document.getElementById('search-input');
+            let activeStage = mockData.stages[0]?.name || "";
+            let expandedAppLists = new Set();
+            let searchTerm = '';
+            let APPS_PER_ROW = window.innerWidth <= 480 ? 3 : 5;
+
+            window.addEventListener('resize', () => {
+                const newAppsPerRow = window.innerWidth <= 480 ? 3 : 5;
+                if (newAppsPerRow !== APPS_PER_ROW) {
+                    APPS_PER_ROW = newAppsPerRow;
+                    renderTable();
+                }
+            });
+
+            function renderTabs() {
+                tabsContainer.innerHTML = '';
+                mockData.stages.forEach((stage, index) => {
+                    const tab = document.createElement('div');
+                    tab.className = 'tab' + (stage.name === activeStage ? ' active' : '');
+                    tab.textContent = stage.name;
+                    tab.setAttribute('role', 'tab');
+                    tab.setAttribute('aria-selected', stage.name === activeStage);
+                    tab.setAttribute('tabindex', '0');
+                    tab.setAttribute('id', `tab-${stage.name}`);
+                    tab.onclick = () => {
+                        activeStage = stage.name;
+                        renderTabs();
+                        renderTable();
+                    };
+                    tab.onkeypress = (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            tab.click();
+                        }
+                    };
+                    tabsContainer.appendChild(tab);
+                });
+            }
+
+            function filterApps(apps) {
+                return apps.filter(app => {
+                    const matchesSearch = searchTerm === '' ||
+                        app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        app.description.toLowerCase().includes(searchTerm.toLowerCase());
+                    return matchesSearch && app.stage === activeStage;
+                });
+            }
+
+            function renderTable() {
+                tableBody.innerHTML = '';
+
+                const visibleDomains = mockData.domains.filter(domain => {
+                    const filteredApps = filterApps(mockData.applications.filter(app => app.domain === domain.name));
+                    return filteredApps.length > 0;
+                });
+
+                visibleDomains.forEach(domain => {
+                    const tr = document.createElement('tr');
+                    const tdDomain = document.createElement('td');
+
+                    const domainHeader = document.createElement('div');
+                    domainHeader.className = 'department-header';
+                    domainHeader.textContent = domain.name;
+
+                    tdDomain.appendChild(domainHeader);
+                    tr.appendChild(tdDomain);
+
+                    const tdApps = document.createElement('td');
+                    const filteredApps = filterApps(mockData.applications.filter(app => app.domain === domain.name));
+
+                    if (filteredApps.length === 0) {
+                        tdApps.innerHTML = '<span class="muted">Uygulama bulunamadı</span>';
+                    } else {
+                        const appList = document.createElement('div');
+                        appList.className = `app-list${expandedAppLists.has(domain.name) ? ' expanded' : ''}`;
+                        appList.style.maxHeight = expandedAppLists.has(domain.name) ? '800px' : '65px';
+
+                        filteredApps.forEach((app, index) => {
+                            const tooltip = document.createElement('span');
+                            tooltip.className = `tooltip app-item${index >= APPS_PER_ROW && !expandedAppLists.has(domain.name) ? ' hidden' : ''}`;
+
+                            const link = document.createElement('a');
+                            link.href = app.url;
+                            link.target = '_blank';
+                            link.textContent = app.name;
+                            link.setAttribute('aria-label', `${app.name} - ${app.description}`);
+
+                            const tooltipText = document.createElement('span');
+                            tooltipText.className = 'tooltiptext';
+                            tooltipText.textContent = app.description;
+                            tooltipText.setAttribute('role', 'tooltip');
+
+                            tooltip.appendChild(link);
+                            tooltip.appendChild(tooltipText);
+                            appList.appendChild(tooltip);
+                        });
+
+                        if (filteredApps.length > APPS_PER_ROW) {
+                            const showMoreBtn = document.createElement('button');
+                            showMoreBtn.className = `show-more-btn${expandedAppLists.has(domain.name) ? ' expanded' : ''}`;
+                            const icon = document.createElement('i');
+                            icon.className = 'fas fa-chevron-down';
+                            showMoreBtn.appendChild(icon);
+
+                            showMoreBtn.onclick = (e) => {
+                                e.preventDefault();
+                                const isExpanding = !expandedAppLists.has(domain.name);
+                                showMoreBtn.className = `show-more-btn${isExpanding ? ' expanded' : ''}`;
+
+                                appList.className = `app-list${isExpanding ? ' expanded' : ''}`;
+                                appList.style.maxHeight = isExpanding ? '800px' : '65px';
+
+                                const items = Array.from(appList.querySelectorAll('.app-item'));
+
+                                if (isExpanding) {
+                                    expandedAppLists.add(domain.name);
+
+                                    setTimeout(() => {
+                                        items.forEach((item, index) => {
+                                            if (index >= APPS_PER_ROW) {
+                                                item.classList.remove('hidden');
+                                            }
+                                        });
+                                    }, 50);
+                                } else {
+                                    items.forEach((item, index) => {
+                                        if (index >= APPS_PER_ROW) {
+                                            item.classList.add('hidden');
+                                        }
+                                    });
+
+                                    setTimeout(() => {
+                                        expandedAppLists.delete(domain.name);
+                                    }, 300);
+                                }
+                            };
+                            appList.appendChild(showMoreBtn);
+                        }
+
+                        tdApps.appendChild(appList);
+                    }
+                    tr.appendChild(tdApps);
+                    tableBody.appendChild(tr);
+                });
+            }
+
+            searchInput.addEventListener('input', (e) => {
+                searchTerm = e.target.value;
+                expandedAppLists = new Set();
+                renderTable();
+            });
+
+            if ('ontouchstart' in window) {
+                document.addEventListener('click', (e) => {
+                    const tooltipEl = e.target.closest('.tooltip');
+                    if (tooltipEl && e.target.tagName === 'A') {
+                        e.preventDefault();
+                        const tooltipText = tooltipEl.querySelector('.tooltiptext');
+
+                        document.querySelectorAll('.tooltiptext.visible').forEach(tt => {
+                            if (tt !== tooltipText) tt.classList.remove('visible');
+                        });
+
+                        if (tooltipText) {
+                            tooltipText.classList.toggle('visible');
+                            if (tooltipText.classList.contains('visible')) {
+                                setTimeout(() => {
+                                    window.addEventListener('click', closeTooltip);
+                                }, 0);
+                            }
+                        }
+
+                        function closeTooltip(evt) {
+                            if (!tooltipEl.contains(evt.target)) {
+                                tooltipText.classList.remove('visible');
+                                window.removeEventListener('click', closeTooltip);
+                            }
+                        }
+                    }
+                });
+
+                const style = document.createElement('style');
+                style.textContent = `
+          .tooltip .tooltiptext.visible {
+            visibility: visible;
+            opacity: 1;
+          }
+          .tooltip a:focus {
+            outline: none;
+          }
+        `;
+                document.head.appendChild(style);
+            }
+
+            renderTabs();
+            renderTable();
+        });
+    </script>
+</body>
+
+</html>
